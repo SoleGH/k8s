@@ -1,3 +1,33 @@
 [submodule "k8s_image/kube-apiserver-amd64"]
 	path = k8s_image/kube-apiserver-amd64
 	url = https://github.com/SoleGH/kube-apiserver-amd64.git
+[submodule "k8s_image/kube-controller-manager-amd64"]
+	path = k8s_image/kube-controller-manager-amd64
+	url = https://github.com/SoleGH/kube-controller-manager-amd64.git
+[submodule "k8s_image/kube-scheduler-amd64"]
+	path = k8s_image/kube-scheduler-amd64
+	url = https://github.com/SoleGH/kube-scheduler-amd64.git
+[submodule "k8s_image/kube-proxy-amd64"]
+	path = k8s_image/kube-proxy-amd64
+	url = https://github.com/SoleGH/kube-proxy-amd64.git
+[submodule "k8s_image/pause-amd64"]
+	path = k8s_image/pause-amd64
+	url = https://github.com/SoleGH/pause-amd64.git
+[submodule "k8s_image/etcd-amd64"]
+	path = k8s_image/etcd-amd64
+	url = https://github.com/SoleGH/etcd-amd64.git
+[submodule "k8s_image/kube-discovery-amd64"]
+	path = k8s_image/kube-discovery-amd64
+	url = https://github.com/SoleGH/kube-discovery-amd64.git
+[submodule "k8s_image/kubedns-amd64"]
+	path = k8s_image/kubedns-amd64
+	url = https://github.com/SoleGH/kubedns-amd64.git
+[submodule "k8s_image/kube-dnsmasq-amd64"]
+	path = k8s_image/kube-dnsmasq-amd64
+	url = https://github.com/SoleGH/kube-dnsmasq-amd64.git
+[submodule "k8s_image/exechealthz-amd64"]
+	path = k8s_image/exechealthz-amd64
+	url = https://github.com/SoleGH/exechealthz-amd64.git
+[submodule "k8s_image/kubernetes-dashboard-amd64"]
+	path = k8s_image/kubernetes-dashboard-amd64
+	url = https://github.com/SoleGH/kubernetes-dashboard-amd64.git
