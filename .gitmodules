@@ -31,3 +31,6 @@
 [submodule "k8s_image/kubernetes-dashboard-amd64"]
 	path = k8s_image/kubernetes-dashboard-amd64
 	url = https://github.com/SoleGH/kubernetes-dashboard-amd64.git
+[submodule "k8s_image/coredns"]
+	path = k8s_image/coredns
+	url = https://github.com/SoleGH/coredns.git
