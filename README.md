@@ -11,6 +11,7 @@
 - [gcr.io/google_containers/kubedns-amd64](http://gcr.io/google_containers/kubedns-amd64)
 - [gcr.io/google_containers/kube-dnsmasq-amd64](http://gcr.io/google_containers/kube-dnsmasq-amd64)
 - [gcr.io/google_containers/exechealthz-amd64](http://gcr.io/google_containers/exechealthz-amd64)
+- [gcr.io/google-containers/kubernetes-dashboard-amd64](https://console.cloud.google.com/gcr/images/google-containers/GLOBAL/kubernetes-dashboard-amd64)
 
 
 ### k8s 1.11.0自动下载各模块版本
