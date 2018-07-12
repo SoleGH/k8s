@@ -102,7 +102,7 @@ etcd:
 kubernetesVersion: v1.11.0
 imageRepository: soleyang    #指定镜像源
 ```
-* 初始化(确保kubelet状态为active)
+* **初始化(确保kubelet状态为active),必须使用配置文件初始化，指定使用国内镜像，否则默认使用google镜像**
 ```
 # 查看kubelet状态
 $ systemctl status kubelet
