@@ -1,3 +1,4 @@
+# 大前提：国内无法访问gcr io,需要使用docker将镜像拖到国内
 ## kubeadm,kubectl and kubelet 安装
 ### [官网推荐](https://kubernetes.io/docs/tasks/tools/install-kubeadm/)
 ```
