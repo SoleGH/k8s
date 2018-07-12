@@ -9,7 +9,7 @@ EOF
 apt-get update
 apt-get install -y kubelet kubeadm kubectl
 ```
-### 网络问题
+### 问题一：网络问题
 * 解决方案：使用proxychains:
 ```
 $ proxychains apt-get curl ...
@@ -41,27 +41,55 @@ $ kubeadm init --kubernetes-version=v1.11.0 --pod-network-cidr=10.244.0.0/16
 ```
 unable to get URL "https://dl.k8s.io/release/stable-1.11.txt": Get https://storage.googleapis.com/kubernetes-release/release/stable-1.11.txt: read tcp 172.16.3.170:60992->172.217.24.16:443: read: connection reset by peer
 ```
+### 修改配置
 * kubelet 关闭swap
 ```
 #/etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 Environment="KUBELET_SWAP_ARGS=--fail-swap-on=false"
 ExecStart=+ $KUBELET_SWAP_ARGS
 ```
-* 修改`/etc/default/kubelet`:
+* 修改`/etc/default/kubelet`(若在`kubelet.service.d/10-kubeadm.con`添加过则不修改此处):
 ```
-KUBELET_EXTRA_ARGS=--pod-infra-container-image=registry.cn-hangzhou.aliyuncs.com/yangbf/pause-amd64
+KUBELET_EXTRA_ARGS=--pod-infra-container-image=soleyang/pause-amd64
 ```
-* 修改`/etc/systemd/system/kubelet.service.d/10-kubeadm.conf`
+* 修改`/etc/systemd/system/kubelet.service.d/10-kubeadm.conf`（若可以自由访问gcr.io可忽略，修改kubeadm init 使用国内镜像此处必须修改）
 ```
 # vim /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 
-Environment="KUBELET_INFRA_IMAGE=--pod-infra-container-image=docker.cinyi.com:443/senyint/pause-amd64:3.1"
+Environment="KUBELET_INFRA_IMAGE=--pod-infra-container-image=soleyang/pause-amd64:3.1"
 ExecStart=+ $KUBELET_INFRA_IMAGE
 ```
-* 统一[cgroup](https://github.com/SoleGH/much_more/issues/10)
-* kubeadm init 配置
+* 统一docker和kubeadm的[cgroup](https://github.com/SoleGH/much_more/issues/10)
 ```
-#k8s_ini.conf
+# 确认docker的cgroup driver
+
+$ docker info |grep -i cgroup
+Cgroup Driver: cgroupfs
+
+# 查看kubeadm 的cgroup
+
+$ sudo cat /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+# Note: This dropin only works with kubeadm and kubelet v1.11+
+......
+Environment="KUBELET_CGROUP_ARGS=--cgroup-driver=cgroupfs"
+
+# 若不一样，则设置成一样
+
+$ vi /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+....
+update KUBELET_CGROUP_ARGS=--cgroup-driver=systemd to KUBELET_CGROUP_ARGS=--cgroup-driver=cgroupfs
+
+# ExecStart中添加 $KUBELET_CGROUP_ARGS
+```
+* 重启
+```
+$ systemctl daemon-reload
+$ service kubelet restart
+```
+* 自定义kubeadm init 配置
+```
+#k8s_init.conf
+
 apiVersion: kubeadm.k8s.io/v1alpha1
 kind: MasterConfiguration
 api:
@@ -71,7 +99,7 @@ networking:
 etcd:
   image: soleyang/etcd-amd64:3.2.18
 kubernetesVersion: v1.11.0
-imageRepository: soleyang
+imageRepository: soleyang    #指定镜像源
 ```
 * 初始化(确保kubelet状态为active)
 ```
@@ -109,10 +137,15 @@ $ kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.10.0/Docu
 $ kubeadm token list
 $ kubectl get nodes
 $ kubectl get pod -o wide #查看服务运行在哪个节点
+$ kubectl create -f *.yaml #新增deployment
+$ kubectl delete -f *.yaml #删除deployment
+$ kubectl expose deployment deployment_name --type=NodePort --port=5000 #暴露服务
+$ kubectl get svc [deployment_name] #查询服务
+$ kubectl delete svc deployment_name #删除服务
 ```
 ### 添加子节点
 * 安装环境 kubeadm kubelet kubectl docker
-* 配置kubelet(同masker,不确定是否必要，不确定node镜像是通过master获取还是直接通过网络，如果是网络则必须配置，待测试)
+* 配置kubelet(同master使用国内镜像)
 * 使用`kubeadm init`生成的`kubeadm join --token......`添加节点
 ```
 root@yangbf-VirtualBox:/etc/default# kubeadm join 172.16.3.170:6443 --token ff8o8p.pidb75sgqt87givu --discovery-token-ca-cert-hash sha256:f1f320c210ca43ca196b2b8a9c53013950fa48d994c4ec750b59a8703a33e988
@@ -250,6 +283,11 @@ token:      eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2V
 ```
 $ kubectl proxy
 Starting to serve on 127.0.0.1:8001
-# 浏览器登入[http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/](http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/)
-# 用上面查到的`token`登录
 ```
+* 浏览器登入[http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/](http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/)
+ 用上面查到的`token`登录
+
+![登录](../images/dashboard_login.png)
+* 首页
+
+![](../images/dashboard_index.png)
